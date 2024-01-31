@@ -1,0 +1,54 @@
+300. Longest Increasing Subsequence
+Given an integer array nums, return the length of the longest strictly increasing subsequence
+
+//In C++
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& nums) {
+        int n = nums.size();
+        vector<int> memo(n,-1);
+        int ans = 0;
+        for(int i = 0; i < n; i++)
+            ans = max(ans,helper(memo, nums, i));
+        return ans;
+    }
+    int helper(vector<int>& memo, vector<int>& nums, int m)
+    {  
+        if(memo[m] != -1)
+            return memo[m];
+        int count = 0;
+        bool greater_than_some_thing = false;
+        for(int i = 0; i <= m-1; i++)
+        {
+            if(nums[m] > nums[i])
+            {
+                count = max(count, 1 + helper(memo,nums,i));
+                greater_than_some_thing = true;
+            }
+        }
+        if(!greater_than_some_thing)
+            count = 1;
+        memo[m] = count;
+        return count;
+    }
+};
+
+//In Python
+class Solution:
+    def lengthOfLIS(self, nums: List[int]) -> int:
+        def dfs(memo, nums, m):
+            if memo[m] != -1:
+                return memo[m]
+            count = 1
+            for i in range(m):
+                if nums[i] < nums[m]:
+                    count = max(count, 1 + dfs(memo,nums,i))
+            memo[m] = count
+            return count
+        
+        memo = [-1] * len(nums)
+        n = len(nums)
+        ans = 0
+        for i in range(n):
+            ans = max(ans,dfs(memo,nums,i))
+        return ans
