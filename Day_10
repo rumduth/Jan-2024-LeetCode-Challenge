@@ -1,0 +1,114 @@
+2385. Amount of Time for Binary Tree to Be Infected
+You are given the root of a binary tree with unique values, and an integer start. At minute 0, an infection starts from the node with value start.
+
+Each minute, a node becomes infected if:
+
+The node is currently uninfected.
+The node is adjacent to an infected node.
+Return the number of minutes needed for the entire tree to be infected.
+
+//C++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    TreeNode* startNode = NULL;
+    void helper(TreeNode* root, TreeNode* p, unordered_map<TreeNode*, TreeNode*>& m, int start)
+    {
+        if(root == NULL)
+            return;
+        if(root->val == start)
+            startNode = root;
+        m[root] = p;
+        helper(root->left,root,m,start);
+        helper(root->right,root,m,start);
+    }
+    int amountOfTime(TreeNode* root, int start) {
+        unordered_map<TreeNode*, TreeNode*> parent;
+        parent[root] = NULL;
+        if(root->val == start)
+            startNode = root; 
+        helper(root->left, root, parent, start);
+        helper(root->right, root, parent, start);
+        unordered_map<TreeNode*, bool> visited;
+        queue<pair<TreeNode*, int>>q;
+        q.push({startNode,0});
+        visited[startNode] = true;
+        int count = 0;
+        while(!q.empty())
+        {
+            auto f = q.front();
+            count = max(count,f.second);
+            q.pop();
+            if(f.first->left && !visited.count(f.first->left))
+            {
+                q.push({f.first->left,f.second+1});
+                visited[f.first->left] = true;
+            }
+            if(f.first->right && !visited.count(f.first->right))
+            {
+                q.push({f.first->right,f.second+1});
+                visited[f.first->right] = true;
+            }
+            if(parent[f.first] && !visited.count(parent[f.first]))
+            {
+                q.push({parent[f.first],f.second+1});
+                visited[parent[f.first]] = true;
+            }
+        }
+        return count;
+
+
+    }
+};
+
+Time Complexity: O(N)
+Space Complexity: O(N)
+
+
+//Python3
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def amountOfTime(self, root: Optional[TreeNode], start: int) -> int:
+        def dfs(node):
+            if node is None:
+                return
+            if node.left:
+                graph[node.val].append(node.left.val)
+                graph[node.left.val].append(node.val)
+            if node.right:
+                graph[node.val].append(node.right.val)
+                graph[node.right.val].append(node.val)
+            dfs(node.left)
+            dfs(node.right)
+        graph = defaultdict(list)
+        dfs(root)
+        visited = set()
+        time = -1
+        queue = deque([start])
+        visited.add(start)
+        while queue:
+            time += 1
+            for _ in range(len(queue)):
+                currentNode = queue.popleft()
+                for neighbor in graph[currentNode]:
+                    if neighbor not in visited:
+                        queue.append(neighbor)
+                        visited.add(neighbor)
+        return time
+            
+        

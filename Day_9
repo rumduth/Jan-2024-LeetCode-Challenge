@@ -1,0 +1,64 @@
+872. Leaf-Similar Trees
+Consider all the leaves of a binary tree, from left to right order, the values of those leaves form a leaf value sequence.
+
+//C++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    void helper(vector<int>& v1, TreeNode* root)
+    {
+        if(root == NULL)
+            return;
+        if(root->left == NULL && root->right == NULL)
+        {
+            v1.push_back(root->val);
+            return;
+        }
+        helper(v1,root->left);
+        helper(v1,root->right);
+    }
+    bool leafSimilar(TreeNode* root1, TreeNode* root2) {
+        vector<int> v1;
+        vector<int> v2;
+        helper(v1,root1);
+        helper(v2,root2);
+        return v1 == v2;
+    }
+};
+
+Time Complexity: O(N)
+Space Complexity: O(N)
+
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def leafSimilar(self, root1: Optional[TreeNode], root2: Optional[TreeNode]) -> bool:
+        def helper(l, root):
+            if root is None:
+                return
+            if root.left is None and root.right is None:
+                l.append(root.val)
+                return
+            helper(l,root.left)
+            helper(l,root.right)
+        l1 = []
+        l2 = []
+        helper(l1,root1)
+        helper(l2, root2)
+        return l1 == l2
+            
+        
