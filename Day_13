@@ -1,0 +1,53 @@
+# 1347. Minimum Number of Steps to Make Two Strings Anagram
+# You are given two strings of the same length s and t. In one step you can choose any character of t and replace it with another character.
+
+# Return the minimum number of steps to make t an anagram of s.
+
+# An Anagram of a string is a string that contains the same characters with a different (or the same) ordering.
+
+ 
+
+# Example 1:
+
+# Input: s = "bab", t = "aba"
+# Output: 1
+# Explanation: Replace the first 'a' in t with b, t = "bba" which is anagram of s.
+# Example 2:
+
+# Input: s = "leetcode", t = "practice"
+# Output: 5
+# Explanation: Replace 'p', 'r', 'a', 'i' and 'c' from t with proper characters to make t anagram of s.
+
+//C++
+class Solution {
+public:
+    int minSteps(string s, string t) {
+        int n = t.size();
+        unordered_map<char, int> m_s;
+        unordered_map<char, int> m_t;
+        for(int i = 0; i < s.size(); i++)
+        {
+            m_s[s[i]]++;
+            m_t[t[i]]++;
+        }
+        int cnt = 0;
+        for(auto& i : m_t)
+            if(m_s[i.first] < i.second)
+                cnt += i.second - m_s[i.first];
+        return cnt;
+    }
+};
+
+Time Complexity: O(N)
+Space Complexity: O(N)
+
+//Python3
+class Solution:
+    def minSteps(self, s: str, t: str) -> int:
+        dict_s = Counter(s)
+        dict_t = Counter(t)
+        cnt = 0
+        for key, value in dict_t.items():
+            if value > dict_s[key]:
+                cnt += value - dict_s[key]
+        return cnt

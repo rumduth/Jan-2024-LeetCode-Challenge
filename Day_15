@@ -1,0 +1,70 @@
+2225. Find Players With Zero or One Losses
+You are given an integer array matches where matches[i] = [winneri, loseri] indicates that the player winneri defeated player loseri in a match.
+
+Return a list answer of size 2 where:
+
+answer[0] is a list of all players that have not lost any matches.
+answer[1] is a list of all players that have lost exactly one match.
+The values in the two lists should be returned in increasing order.
+
+Note:
+
+You should only consider the players that have played at least one match.
+The testcases will be generated such that no two matches will have the same outcome.
+
+
+//C++
+class Solution {
+public:
+    vector<vector<int>> findWinners(vector<vector<int>>& matches) {
+        unordered_map<int, int> win;
+        unordered_map<int, int> lose;
+        for(int i = 0; i < matches.size(); i++)
+        {
+            win[matches[i][0]]++;
+            lose[matches[i][1]]++;
+        }
+        vector<vector<int>> ans;
+        vector<int> a;
+        vector<int> b;
+        for(auto &i : win)
+            if(!lose.count(i.first))
+                a.push_back(i.first);
+        
+        for(auto &i : lose)
+            if(i.second == 1)
+                b.push_back(i.first);
+                
+        sort(a.begin(),a.end());
+        sort(b.begin(),b.end());
+        ans.push_back(a);
+        ans.push_back(b);
+        return ans;
+    }
+};
+
+Time Complexity: O(NLogN)
+Space Complexity: O(N)
+
+//Python3
+class Solution:
+    def findWinners(self, matches: List[List[int]]) -> List[List[int]]:
+        winner = defaultdict(int)
+        loser = defaultdict(int)
+        for w, l in matches:
+            winner[w] += 1
+            loser[l] += 1
+        
+        w = []
+        l = []
+        for index in winner.keys():
+            if index not in loser.keys():
+                w.append(index)
+        
+        for index, value in loser.items():
+            if value == 1:
+                l.append(index)
+        w.sort()
+        l.sort()
+        ans = [w,l]
+        return ans
