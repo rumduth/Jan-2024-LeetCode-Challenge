@@ -1,0 +1,157 @@
+907. Sum of Subarray Minimums
+Given an array of integers arr, find the sum of min(b), where b ranges over every (contiguous) subarray of arr. Since the answer may be large, return the answer modulo 109 + 7.
+
+//C++
+
+//Intuitive Ways
+class Solution {
+public:
+    int sumSubarrayMins(vector<int>& nums) {
+        const int MOD = 1e9 + 7;
+        int n = nums.size();
+        
+        int ans = 0;
+        for(int i = 0; i < n; i++)
+        {
+           int left = 0;
+           int right = 0;
+           int j = i - 1;
+           int k = i + 1;
+           while(j >= 0 && nums[j] >= nums[i])
+           {
+               left++;
+               j--;
+           }
+           while(k < n && nums[k] > nums[i])
+           {
+               right++;
+               k++;
+           }
+           ans = (ans + 1LL * (left+1)*(right+1) * nums[i]) % MOD;
+        }
+        return ans;
+    }
+};
+
+
+Time Complexity: O(N^2)
+Space Complexity: O(1)
+
+
+//Python
+class Solution:
+    def sumSubarrayMins(self, arr: List[int]) -> int:
+        MOD = 10**9 + 7
+        n = len(arr)
+        ans = 0
+        for i in range(n):
+            left = 0
+            right = 0
+            j = i - 1
+            k = i + 1
+            while j >= 0 and arr[i] <= arr[j]:
+                left += 1
+                j -= 1
+            while k < n and arr[k] > arr[i]:
+                right += 1
+                k += 1
+            ans = (ans + (left+1)*(right+1) * arr[i]) % MOD
+        return ans
+            
+        
+// Monostack 
+
+Time Complexity: O(N)
+Space Complexity: O(N)
+
+//C++
+class Solution {
+public:
+    int sumSubarrayMins(vector<int>& arr) {
+        const int MOD = 1e9 + 7;
+        int n = arr.size();
+        vector<int> left(n,1);
+        vector<int> right(n,1);
+        stack<pair<int,int>> s;
+        for(int i = 0; i < n; i++)
+        {
+            if(s.empty() || s.top().first < arr[i])
+                s.push({arr[i],1});
+            else
+            {
+                int cnt = 1;
+                while(!s.empty() && s.top().first >= arr[i])
+                {
+                    cnt += s.top().second;
+                    s.pop();
+                }
+                left[i] = cnt;
+                s.push({arr[i],cnt});
+            }
+        }
+
+        while(!s.empty())
+            s.pop();
+        for(int i = n-1; i>=0; i--)
+        {
+            if(s.empty() || s.top().first <= arr[i])
+                s.push({arr[i],1});
+            else
+            {
+                int cnt = 1;
+                while(!s.empty() && s.top().first > arr[i])
+                {
+                    cnt += s.top().second;
+                    s.pop();
+                }
+                right[i] = cnt;
+                s.push({arr[i],cnt});
+            }
+        }
+  
+        long long  ans = 0;
+        for(int i = 0; i < n; i++)
+        {
+            ans = (ans + 1LL*left[i]*right[i]*arr[i]) % MOD;
+        }
+        return ans;
+    }
+};
+
+//Python3:
+class Solution:
+    def sumSubarrayMins(self, arr: List[int]) -> int:
+        MOD = 10**9 + 7
+        n = len(arr)
+        stack = []
+        left = [1] * n
+        right = [1] * n
+        for i in range(n):
+            if len(stack) == 0 or stack[len(stack) - 1][0] < arr[i]:
+                stack.append([arr[i],1])
+            else:
+                cnt = 1
+                while len(stack) != 0 and stack[len(stack) - 1][0] >= arr[i]:
+                    cnt += stack[len(stack) - 1][1]
+                    stack.pop()
+                left[i] = cnt
+                stack.append([arr[i],cnt])
+        stack = []
+        for i in range(n-1,-1,-1):
+            if len(stack) == 0 or stack[len(stack) - 1][0] <= arr[i]:
+                stack.append([arr[i],1])
+            else:
+                cnt = 1
+                while len(stack) != 0 and stack[len(stack) - 1][0] > arr[i]:
+                    cnt += stack[len(stack) - 1][1]
+                    stack.pop()
+                right[i] = cnt
+                stack.append([arr[i],cnt])
+        ans = 0
+        for i in range(n):
+            ans = (ans + left[i] * right[i] * arr[i]) % MOD
+        return ans
+
+
+
+        

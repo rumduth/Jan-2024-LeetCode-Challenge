@@ -1,0 +1,57 @@
+576. Out of Boundary Paths
+There is an m x n grid with a ball. The ball is initially at the position [startRow, startColumn]. You are allowed to move the ball to one of the four adjacent cells in the grid (possibly out of the grid crossing the grid boundary). You can apply at most maxMove moves to the ball.
+
+Given the five integers m, n, maxMove, startRow, startColumn, return the number of paths to move the ball out of the grid boundary. Since the answer can be very large, return it modulo 109 + 7.
+
+//C++
+
+//Recursive
+class Solution {
+public:
+
+    const int MOD = 1e9 + 7;
+    int findPaths(int m, int n, int maxMove, int startRow, int startColumn) {
+        vector<vector<vector<int>>> dp(m, vector<vector<int>>(n, vector<int>(maxMove+1, -1)));
+        return helper(dp,m,n, maxMove, startRow, startColumn);
+    }
+    int helper(vector<vector<vector<int>>>& dp, int m, int n, int move, int i, int j)
+    {
+        if(i < 0 || i >= m || j < 0 || j >=n)
+           return 1;
+        if(move == 0)
+            return 0;
+   
+        if(dp[i][j][move] != -1)
+            return dp[i][j][move];
+        
+        dp[i][j][move] = helper(dp,m,n,move-1,i+1,j) % MOD;
+        dp[i][j][move] = (dp[i][j][move] + helper(dp,m,n,move-1,i-1,j)) % MOD;
+        dp[i][j][move] = (dp[i][j][move] + helper(dp,m,n,move-1,i,j+1)) % MOD;
+        dp[i][j][move] = (dp[i][j][move] + helper(dp,m,n,move-1,i,j-1)) % MOD;
+        return dp[i][j][move];
+    }
+
+};
+Time Complexity: O(ROW*COLUMN*MOVE)
+Space Complexity: O(ROW*COLUMN*MOVE)
+
+
+
+//Python3
+class Solution:
+    def findPaths(self, m: int, n: int, maxMove: int, startRow: int, startColumn: int) -> int:
+        MOD = 10**9 + 7
+        memo = {}
+        def helper(i,j, move):
+            if i < 0 or i == m or j < 0 or j == n:
+                return 1
+    
+            if move == 0:
+                return 0
+            if (i,j,move) in memo:
+                return memo[(i,j,move)]
+            
+            paths = (helper(i+1,j,move-1) + helper(i-1,j,move-1) + helper(i,j+1,move-1) + helper(i,j-1,move-1)) % MOD
+            memo[(i,j,move)] = paths
+            return paths
+        return helper(startRow, startColumn,maxMove)

@@ -1,0 +1,92 @@
+1457. Pseudo-Palindromic Paths in a Binary Tree
+
+Given a binary tree where node values are digits from 1 to 9. A path in the binary tree is said to be pseudo-palindromic if at least one permutation of the node values in the path is a palindrome.
+
+Return the number of pseudo-palindromic paths going from the root node to leaf nodes.
+
+//C++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    void helper(int& ans, int odd, unordered_map<int, int>& m, TreeNode* root)
+    {
+        if(root == NULL)
+            return;
+        m[root->val]++;
+        if(m[root->val] % 2 == 1)
+            odd++;
+        else
+            odd--;
+        if(root->left == NULL && root->right == NULL)
+        {
+            if(odd <= 1)
+                ans++;
+            m[root->val]--;
+            return;
+        }
+        helper(ans,odd,m,root->left);
+        helper(ans,odd,m,root->right);
+        m[root->val]--;
+
+
+    }
+    int pseudoPalindromicPaths (TreeNode* root) {
+        unordered_map<int, int> m;
+        int odd = 0;
+        int ans = 0;
+        helper(ans,odd,m,root);
+        return ans;
+    }
+};
+
+Time Complexity: O(N)
+Space Complexity: O(H)
+
+
+//Python3
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def pseudoPalindromicPaths (self, root: Optional[TreeNode]) -> int:
+
+        cache = defaultdict(int)
+        def helper(root, odd):
+            nonlocal ans
+            if root is None:
+                return
+            cache[root.val] += 1
+            if cache[root.val] % 2 == 1:
+                odd += 1
+            else:
+                odd -= 1
+            if root.left is None and root.right is None:
+                if odd <= 1:
+                    ans += 1
+                cache[root.val] -= 1
+                return
+            helper(root.left,odd)
+            helper(root.right,odd)
+            cache[root.val] -= 1
+        
+        ans = 0
+        helper(root,0)
+        return ans
+
+
+
+
+        

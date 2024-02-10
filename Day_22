@@ -1,0 +1,61 @@
+645. Set Mismatch
+You have a set of integers s, which originally contains all the numbers from 1 to n. Unfortunately, due to some error, one of the numbers in s got duplicated to another number in the set, which results in repetition of one number and loss of another number.
+
+You are given an integer array nums representing the data status of this set after the error.
+
+Find the number that occurs twice and the number that is missing and return them in the form of an array.
+
+
+//C++
+class Solution {
+public:
+    vector<int> findErrorNums(vector<int>& nums) {
+        int n = nums.size();
+        long long a = 0;
+        long long b = 0;
+        long long c = 0;
+        long long d = 0;
+        for(int i = 1; i <= n; i++)
+        {
+            a += i;
+            b += i*i;
+        }
+        for(int i = 0; i < n; i++)
+        {
+            c += nums[i];
+            d += nums[i]*nums[i];
+        }
+        a = a - c;
+        b = b - d;
+        b = b / a;
+        int nums1 = (b-a)/2;
+        int nums2 = (b+a)/2;
+        return {nums1,nums2};
+        
+
+    }
+};
+Time Complexity: O(N)
+Space Complexity: O(1)
+
+//Python3
+class Solution:
+    def findErrorNums(self, nums: List[int]) -> List[int]:
+        a = 0
+        b = 0
+        c = 0
+        d = 0
+        n = len(nums)
+        for i in range(1,n+1):
+            a += i
+            b += i*i
+            c += nums[i-1]
+            d += nums[i-1]**2
+        
+        dif_value = a - c
+        sum_value = (b-d)/dif_value
+        a = int((sum_value - dif_value) / 2)
+        b = int((sum_value + dif_value) / 2)
+        return [a,b]
+
+        
